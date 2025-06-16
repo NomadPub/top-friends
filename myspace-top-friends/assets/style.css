@@ -1,0 +1,216 @@
+/* MySpace Friends Styles - Matching Music Section Style */
+.myspace-friends-container {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 11px;
+    /* background: #f0f4f7; */
+    margin:0;
+    width: 100%;
+    max-width: none;
+    padding: 15px;
+}
+
+.myspace-friends-header {
+    background: linear-gradient(to bottom, #6699cc 0%, #4a7bc8 100%);
+    color: white;
+    padding: 5px 8px;
+    margin: -15px -15px 10px -15px;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    font-family: Verdana, Arial, sans-serif;
+}
+
+.friends-title {
+    color: white;
+    font-weight: bold;
+}
+
+.myspace-friends-content {
+    padding: 0;
+   /* background: #f0f4f7; */
+}
+
+.friends-count {
+    font-size: 11px;
+    color: black;
+    margin-bottom: 8px;
+    font-weight: normal;
+    font-family: Verdana, Arial, sans-serif;
+}
+
+.friends-count strong {
+    color: black;
+    font-weight: normal;
+}
+
+.friends-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px 6px;
+    margin-bottom: 8px;
+    max-height: 280px;
+}
+
+.friend-item {
+    /* background: #f0f4f7; */
+    padding: 4px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.friend-name {
+    font-size: 10px;
+    color: #000080;
+    font-weight: normal;
+    margin-bottom: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: Verdana, Arial, sans-serif;
+    line-height: 12px;
+    order: 1;
+}
+
+.friend-name:hover {
+    color: #000080;
+    text-decoration: none;
+}
+
+.friend-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2px;
+    order: 2;
+}
+
+.friend-photo img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    display: block;
+}
+
+.no-photo {
+    width: 90px;
+    height: 90px;
+    background: #e8ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #666666;
+    text-align: center;
+    font-family: Verdana, Arial, sans-serif;
+}
+
+.online-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #006600;
+    font-weight: bold;
+    margin-top: 2px;
+    gap: 2px;
+    font-family: Verdana, Arial, sans-serif;
+    order: 3;
+}
+
+.online-icon {
+    width: 70px;
+    /* height: 8px; */
+    /* background: #00AA00; */
+    border-radius: 0;
+    display: inline-block;
+    margin-right: 2px;
+}
+
+.online-icon::before {
+    content: "●";
+    color: #00AA00;
+    font-size: 8px;
+    position: relative;
+}
+
+.view-all-friends {
+    text-align: right;
+    margin-top: 6px;
+    padding-top: 4px;
+    /* background: #f0f4f7; */
+    padding: 4px 8px;
+}
+
+.view-all-friends a {
+    color: #000080;
+    font-size: 10px;
+    text-decoration: none;
+    font-weight: normal;
+    font-family: Verdana, Arial, sans-serif;
+}
+
+.view-all-friends a:hover {
+    color: #000080;
+    text-decoration: none;
+}
+
+/* Remove all underlines throughout */
+.myspace-friends-container a {
+    color: #000080;
+    text-decoration: none;
+}
+
+.myspace-friends-container a:hover {
+    color: #000080;
+    text-decoration: none;
+}
+
+.myspace-friends-container a:visited {
+    color: #000080;
+    text-decoration: none;
+}
+
+.myspace-friends-container a:active {
+    color: #000080;
+    text-decoration: none;
+}
+
+/* Ensure consistent spacing */
+.friends-grid {
+    /* background: #f0f4f7; */
+    padding: 0;
+}
+
+/* Mobile responsiveness while maintaining 3x2 layout */
+@media (max-width: 400px) {
+    .friend-photo img,
+    .no-photo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .friends-grid {
+        gap: 6px 4px;
+        max-height: 220px;
+    }
+    
+    .friend-name {
+        font-size: 9px;
+    }
+}
+
+/* Ensure proper display in different contexts */
+.widget .myspace-friends-container,
+.sidebar .myspace-friends-container {
+    max-width: 100%;
+    margin: 0;
+}
+
+/* Admin styles */
+.post-type-myspace_friend .wp-list-table img {
+    max-width: 50px;
+    max-height: 50px;
+}
