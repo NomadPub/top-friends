@@ -215,7 +215,7 @@ class MySpaceTopFriends {
         ?>
         <div class="myspace-friends-container">
             <div class="myspace-friends-header">
-                <span class="friends-title"><?php echo esc_html($owner_name); ?>'s Friend Space</span>
+                <span class="friends-title"><?php echo esc_html($owner_name); ?>'s Top Friends</span>
             </div>
             <div class="myspace-friends-content">
                 <div class="friends-count">
