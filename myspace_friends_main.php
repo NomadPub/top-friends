@@ -4,7 +4,7 @@
  * Plugin URI: https://example.com
  * Description: A nostalgic MySpace-style friends display widget with configurable settings
  * Version: 1.0.0
- * Author: Your Name
+ * Author: Damon Noisette
  * License: GPL v2 or later
  */
 
