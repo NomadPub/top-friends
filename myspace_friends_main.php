@@ -243,7 +243,7 @@ class MySpaceTopFriends {
                     <?php endforeach; ?>
                 </div>
                 <div class="view-all-friends">
-                    <a href="#" onclick="return false;">View All of <?php echo esc_html($owner_name); ?>'s Friends</a>
+                    <!-- <a href="#" onclick="return false;">View All of <?php echo esc_html($owner_name); ?>'s Friends</a> -->
                 </div>
             </div>
         </div>
