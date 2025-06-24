@@ -1,25 +1,21 @@
 <?php
 /**
  * Plugin Name: MySpace Top Friends
- * Plugin URI: https://example.com
+ * Plugin URI: https://example.com 
  * Description: A nostalgic MySpace-style friends display widget with configurable settings
- * Version: 1.0.0
+ * Version: 1.1
  * Author: Damon Noisette
- * License: GPL v2 or later
  */
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
-
 // Define plugin constants
-define('MYSPACE_FRIENDS_VERSION', '1.0.0');
+define('MYSPACE_FRIENDS_VERSION', '1.0.1');
 define('MYSPACE_FRIENDS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MYSPACE_FRIENDS_PLUGIN_URL', plugin_dir_url(__FILE__));
-
 class MySpaceTopFriends {
-    
     public function __construct() {
         add_action('init', array($this, 'init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
@@ -28,27 +24,24 @@ class MySpaceTopFriends {
         add_shortcode('myspace_friends', array($this, 'display_friends_shortcode'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
-    
     public function init() {
         $this->create_friend_post_type();
     }
-    
     public function activate() {
         $this->create_friend_post_type();
         flush_rewrite_rules();
-        
         // Set default options
         if (!get_option('myspace_friends_settings')) {
             $defaults = array(
                 'owner_name' => get_bloginfo('name'),
                 'friends_count' => 'plenty of',
                 'show_count' => 8,
-                'online_probability' => 30
+                'online_probability' => 30,
+                'randomize_order' => false // New default value
             );
             add_option('myspace_friends_settings', $defaults);
         }
     }
-    
     public function create_friend_post_type() {
         $args = array(
             'public' => true,
@@ -78,11 +71,9 @@ class MySpaceTopFriends {
         );
         register_post_type('myspace_friend', $args);
     }
-    
     public function enqueue_scripts() {
         wp_enqueue_style('myspace-friends-style', MYSPACE_FRIENDS_PLUGIN_URL . 'assets/style.css', array(), MYSPACE_FRIENDS_VERSION);
     }
-    
     public function add_admin_menu() {
         add_options_page(
             'MySpace Friends Settings',
@@ -92,17 +83,14 @@ class MySpaceTopFriends {
             array($this, 'admin_page')
         );
     }
-    
     public function admin_init() {
         register_setting('myspace_friends_settings', 'myspace_friends_settings');
-        
         add_settings_section(
             'myspace_friends_main',
             'Main Settings',
             null,
             'myspace-friends-settings'
         );
-        
         add_settings_field(
             'owner_name',
             'Owner Name',
@@ -110,7 +98,6 @@ class MySpaceTopFriends {
             'myspace-friends-settings',
             'myspace_friends_main'
         );
-        
         add_settings_field(
             'friends_count',
             'Friends Count Text',
@@ -118,7 +105,6 @@ class MySpaceTopFriends {
             'myspace-friends-settings',
             'myspace_friends_main'
         );
-        
         add_settings_field(
             'show_count',
             'Number of Friends to Show',
@@ -126,7 +112,6 @@ class MySpaceTopFriends {
             'myspace-friends-settings',
             'myspace_friends_main'
         );
-        
         add_settings_field(
             'online_probability',
             'Online Status Probability (%)',
@@ -134,36 +119,45 @@ class MySpaceTopFriends {
             'myspace-friends-settings',
             'myspace_friends_main'
         );
+        add_settings_field(
+            'randomize_order',
+            'Randomize Friend Order',
+            array($this, 'randomize_order_callback'),
+            'myspace-friends-settings',
+            'myspace_friends_main'
+        );
     }
-    
     public function owner_name_callback() {
         $options = get_option('myspace_friends_settings');
         $value = isset($options['owner_name']) ? $options['owner_name'] : get_bloginfo('name');
         echo '<input type="text" name="myspace_friends_settings[owner_name]" value="' . esc_attr($value) . '" />';
         echo '<p class="description">The name that appears in "Name has plenty of Friends"</p>';
     }
-    
     public function friends_count_callback() {
         $options = get_option('myspace_friends_settings');
         $value = isset($options['friends_count']) ? $options['friends_count'] : 'plenty of';
         echo '<input type="text" name="myspace_friends_settings[friends_count]" value="' . esc_attr($value) . '" />';
         echo '<p class="description">Text to display (e.g., "plenty of", "405", "tons of")</p>';
     }
-    
     public function show_count_callback() {
         $options = get_option('myspace_friends_settings');
         $value = isset($options['show_count']) ? $options['show_count'] : 8;
         echo '<input type="number" name="myspace_friends_settings[show_count]" value="' . esc_attr($value) . '" min="1" max="20" />';
         echo '<p class="description">How many friends to display at once</p>';
     }
-    
     public function online_probability_callback() {
         $options = get_option('myspace_friends_settings');
         $value = isset($options['online_probability']) ? $options['online_probability'] : 30;
         echo '<input type="number" name="myspace_friends_settings[online_probability]" value="' . esc_attr($value) . '" min="0" max="100" />';
         echo '<p class="description">Percentage chance a friend will show as "Online Now!"</p>';
     }
-    
+
+    public function randomize_order_callback() {
+        $options = get_option('myspace_friends_settings');
+        $checked = isset($options['randomize_order']) && $options['randomize_order'] ? 'checked' : '';
+        echo "<label><input type='checkbox' name='myspace_friends_settings[randomize_order]' value='1' $checked /> Randomize friend display order</label>";
+    }
+
     public function admin_page() {
         ?>
         <div class="wrap">
@@ -175,7 +169,6 @@ class MySpaceTopFriends {
                 submit_button();
                 ?>
             </form>
-            
             <div style="margin-top: 30px; padding: 20px; background: #f1f1f1; border-radius: 5px;">
                 <h3>How to Use</h3>
                 <p><strong>Step 1:</strong> Add friends by going to <a href="<?php echo admin_url('edit.php?post_type=myspace_friend'); ?>">Friends</a> in your admin menu</p>
@@ -186,31 +179,40 @@ class MySpaceTopFriends {
         </div>
         <?php
     }
-    
     public function display_friends_shortcode($atts) {
         $atts = shortcode_atts(array(
             'count' => null
         ), $atts);
-        
+
         $options = get_option('myspace_friends_settings');
         $owner_name = isset($options['owner_name']) ? $options['owner_name'] : get_bloginfo('name');
         $friends_count = isset($options['friends_count']) ? $options['friends_count'] : 'plenty of';
         $show_count = $atts['count'] ? $atts['count'] : (isset($options['show_count']) ? $options['show_count'] : 8);
         $online_probability = isset($options['online_probability']) ? $options['online_probability'] : 30;
-        
-        // Get friends
-        $friends = get_posts(array(
+        $randomize_order = !empty($options['randomize_order']); // Get boolean value
+
+        // Build query args
+        $query_args = array(
             'post_type' => 'myspace_friend',
             'posts_per_page' => $show_count,
             'post_status' => 'publish',
-            'orderby' => 'menu_order',
-            'order' => 'ASC'
-        ));
-        
+        );
+
+        // Apply order logic
+        if ($randomize_order) {
+            $query_args['orderby'] = 'rand';
+        } else {
+            $query_args['orderby'] = 'menu_order';
+            $query_args['order'] = 'ASC';
+        }
+
+        // Get friends
+        $friends = get_posts($query_args);
+
         if (empty($friends)) {
             return '<div class="myspace-friends-container"><p>No friends added yet. <a href="' . admin_url('post-new.php?post_type=myspace_friend') . '">Add some friends!</a></p></div>';
         }
-        
+
         ob_start();
         ?>
         <div class="myspace-friends-container">
@@ -251,6 +253,5 @@ class MySpaceTopFriends {
         return ob_get_clean();
     }
 }
-
 // Initialize the plugin
 new MySpaceTopFriends();
